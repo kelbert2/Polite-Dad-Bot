@@ -1,0 +1,11 @@
+{
+    "name": "polite-dad-bot",
+    "version": "1.0.0",
+    "description": "Hi, I'm a polite dad bot",
+    "main": "bot.js",
+    "author": "Kris Elbert",
+    "dependencies": {
+        "discord.io": "^2.5.3",
+        "discord.js": "^11.5.1"
+    }
+}
