@@ -1,4 +1,4 @@
 {
     "prefix": "daddy",
-    "inactivity-timer-ms": 10000
+    "inactivityTimerMs": 10000
 }

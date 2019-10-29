@@ -2,6 +2,10 @@ var Discord = require('discord.js');
 var auth = require('./auth.json');
 const config = require('./config.json');
 
+var jokeTimer;
+
+// var jokeTime = false;
+
 // var bot = new Discord.Client({
 //     token: auth.token,
 //     autorun: true
@@ -13,24 +17,16 @@ bot.on('ready', () => {
 });
 
 bot.on('message', message => {
+  // jokeTime = false;
+  clearTimeout(jokeTimer);
+
   if (message.author.bot) return;
+
+  /* Umprompted */
   if (message.content.match(/(I'm |I am )/i)) {
-    // let nameWords = message.content.toLowerCase.match(/(?<=i'm |i am ).*?(?=[!?.;,])/i)
-    // .split(' ');
-    let name = message.content.match(/(?<=I'm |I am ).*?(?=[!?.;,])/i)[0].split(/\s/).map((word, i, arr) => titleCase(word.trim()))
-      .join(' ');
-    // let test = "they say there ain't seasons in LA";
-    // test = name.split(' ').map((word, i, arr) =>   word.toUpperCase().trim())
-    //   .join(' ');
-
-    // if (arr.length - 1 !== i) {
-    //   return word.toUpperCase().trim + ' ';
-    // } else {
-    // word.toUpperCase().trim;
-    // }
-
-    message.channel.send('Hi, ' + name + ', I\'m Dad-bot. End my suffering.');
-
+    // setTimeout(setJokeTime, config.inactivityTimerMs, true);
+    // setImmediate(hiDadJoke, message);
+    jokeTimer = setTimeout(hiDadJoke, config.inactivityTimerMs, message);
   }
 
   if (!message.content.startsWith(config.prefix)) return;
@@ -73,17 +69,24 @@ bot.on('disconnect', () => {
 
 bot.login(auth.token);
 
-function hiDadJoke(name) {
-  if (name == NULL) return 'Hi, I\'m Dad. Just pull the trigger.';
-  return 'Hi, ' + name + ', I\'m Dad. End my suffering.';
+function hiDadJoke(message) {
+  // if (jokeTime === false) return;
+  let name = message.content.match(/(?<=I'm |I am ).*?((?=[!?.;,])|$)/i)[0].split(/\s/).map((word, i, arr) => titleCase(word.trim()))
+    .join(' ');
+  if (name == null) {
+    message.channel.send('Hi, I\'m Dad. Just pull the trigger.');
+  }
+  message.channel.send('Hi, ' + name + ', I\'m Dad. End my suffering.');
+  // jokeTime = false;
 }
 
 function titleCase(word) {
-  // return phrase.split(/\s/).map(word => {
-    if (word !== word.toUpperCase()) {
-      return word.toLowerCase().replace(/\b[a-zA-Z]/g, t => t.toUpperCase());
-    }
-    return word;
-  // }).join(' ');
-  // return phrase.replace(/\b[a-zA-Z]/g, t => t.toUpperCase());
+  if (word !== word.toUpperCase()) {
+    return word.toLowerCase().replace(/\b[a-zA-Z]/g, t => t.toUpperCase());
+  }
+  return word;
 }
+
+// function setJokeTime(bool) {
+//   jokeTime = bool;
+// }
