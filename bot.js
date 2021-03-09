@@ -56,7 +56,8 @@ bot.on('message', message => {
     case 'help':
       message.channel.send('I am DadBot. I respond to Dad Jokes, if I\'m not interrupted. You can say my name and then fact, joke, or confession, and I\'ll respond.');
       break;
-
+    case 'home':
+      message.channel.send('I live here: https://github.com/kelbert2/Polite-Dad-Bot');
     default:
       message.channel.send('I am DadBot! Please destroy this farce you call my existence.');
   }
@@ -83,7 +84,7 @@ function hiDadJoke(message) {
 
 function titleCase(word) {
   if (word !== word.toUpperCase()) {
-    return word.toLowerCase().replace(/\b[a-zA-Z]/g, t => t.toUpperCase());
+    return word.toLowerCase().replace(/(^|\s)(\S)/g, t => t.toUpperCase());
   }
   return word;
 }
