@@ -1,4 +1,5 @@
 {
-    "prefix": "daddy",
-    "inactivityTimerMs": 10000
+  "prefix": "daddy",
+  "altPrefix": "dadbot",
+  "inactivityTimerMs": 10000
 }
