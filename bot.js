@@ -2,6 +2,7 @@ var Discord = require('discord.js');
 var auth = require('./auth.json');
 const config = require('./config.json');
 const greetings = require('./greetings.json');
+const badwords = require('./badwords.json');
 
 var jokeTimer;
 
@@ -21,14 +22,35 @@ bot.on('message', message => {
   if (message.author.bot) return;
 
   /* Umprompted */
-  if (message.content.match(/(I'm |I am |I’m |I m |im )/i)) {
+  if (message.content.match(/(I'm |I am |I’m |I m |im |imma )/i)) {
     // setTimeout(setJokeTime, config.inactivityTimerMs, true);
     // setImmediate(hiDadJoke, message);
-    jokeTimer = setTimeout(hiDadJoke, config.inactivityTimerMs, message);
+    let jokeTimer = setTimeout(hiDadJoke, config.inactivityTimerMs, message);
+    return;
+  }
+
+  if (message.isMemberMentioned(bot.user) && !message.content.includes("@here") && !message.content.includes("@everyone")) {
+    message.channel.send("I do what I want.");
+  }
+
+  let loveRegex = new RegExp("(?=.*" + config.altPrefix + ")(?=.*\blove).*", "gi");
+  if (message.content.match(loveRegex)) {
+    message.channel.send("Those are some pretty strong words. Are you sure you're ready to mean them?");
+    return;
+  }
+  let hateRegex = new RegExp("(?=.*" + config.altPrefix + ")(?=.*\bhate).*", "gi");
+  if (message.content.match(hateRegex)) {
+    message.channel.send("We've all been there.");
+    return;
+  }
+  if (message.content.match(/(fuck|bitch|shit|damn|shucks|cunt|hell\W|\Wass)/i)) {
+    let badWordsTimer = setTimeout(sendBadWordsResponse, config.inactivityTimerMs, message);
+    return;
   }
 
   if (message.content.toLowerCase().startsWith(config.altPrefix)) {
     message.channel.send('I only respond to "daddy" ;-)');
+    return;
   }
 
   if (!message.content.toLowerCase().startsWith(config.prefix)) return;
@@ -73,7 +95,7 @@ bot.on('disconnect', () => {
 bot.login(auth.token);
 
 function hiDadJoke(message) {
-  let name = message.content.match(/(?<=I'm |I am |I’m |I m |im).*?((?=[!?.;,])|$)/i)[0].split(/\s/).map((word, i, arr) => titleCase(word.trim()))
+  let name = message.content.match(/(?<=I'm |I am |I’m |I m |im |imma ).*?((?=[!?.;,])|$)/i)[0].split(/\s/).map((word, i, arr) => titleCase(word.trim()))
     .join(' ');
   if (name == null) {
     message.channel.send('Hi, I\'m DadBot. Just pull the trigger.');
@@ -93,4 +115,13 @@ function getRandomGreeting(name) {
   const randIndex = Math.floor(Math.random() * greetings.greetings.length)
   const mess = greetings.greetings[randIndex].split("[name]");
   return mess[0] + name + mess[1];
+}
+
+function sendBadWordsResponse(message) {
+  message.channel.send(getRandomResponseToBadWords());
+}
+
+function getRandomResponseToBadWords() {
+  const randIndex = Math.floor(Math.random() * badwords.response.length)
+  return badwords.response[randIndex];
 }
